@@ -3,3 +3,4 @@ main.exe
 build/
 compile_commands.json
 *.plist
+.cache/
