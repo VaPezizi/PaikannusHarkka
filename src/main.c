@@ -146,13 +146,14 @@ int main(){
         printf("numRep: %" PRIu8 "\n", testiMittaus.payload.numRepeat);
         size_t repeatSize = 0;
         if(testiMittaus.payload.numRepeat == 0){
+            testiMittaus.payload.repeats = NULL;
         }else{
             size_t repeatSize = 4 * testiMittaus.payload.numRepeat;
             testiMittaus.payload.repeats = calloc(1, repeatSize);
             fread(testiMittaus.payload.repeats, sizeof(repeatGroup), testiMittaus.payload.numRepeat, file);
         }
 
-        fread(&testiMittaus.CK_A, sizeof(uint8_t), 2, file);
+        fread(&testiMittaus.CK_A, 1, 2, file);
 
         //mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
         mittaukset[idx++] = testiMittaus;
