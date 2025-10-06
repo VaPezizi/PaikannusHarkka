@@ -19,7 +19,7 @@ typedef struct{
 } repeatGroup;
 
 //Struct for a payload of UBX message
-typedef struct
+/*typedef struct
 {
     uint32_t aField;
     uint32_t anotherField;
@@ -27,6 +27,21 @@ typedef struct
     uint8_t reserved0[5];
     uint8_t numRepeat;
     repeatGroup * repeats;
+}payload;*/
+
+typedef struct{
+	uint32_t iTOW;
+	int32_t lon;
+	int32_t lat;
+	int32_t height;
+	int32_t hMSL;
+	uint32_t hAcc;
+	uint32_t vAcc;
+
+}UBX_NAV_POSLLH_load;
+
+typedef struct{
+	uint8_t byte;
 }payload;
 
 typedef struct 
@@ -36,7 +51,7 @@ typedef struct
     uint8_t class;
     uint8_t id;
     uint16_t lenght;
-    payload payload;
+    payload * payload;
     uint8_t CK_A;
     uint8_t CK_B;
 }mittaus;
@@ -54,39 +69,30 @@ void calculateChecksum(mittaus * mittaus, uint8_t * CK_A, uint8_t * CK_B){
     *CK_A = 0, *CK_B = 0;
     int N_BYTES = 4 + mittaus->lenght;    //4bytes + payload
     uint8_t buffer[N_BYTES];
-    memcpy(buffer, (uint8_t*)mittaus + 2, N_BYTES); //We ignore the first two bytes
+    memcpy(buffer, &mittaus->class, 4); //We ignore the first two bytes
+    memcpy(buffer + 4, mittaus->payload ,mittaus->lenght);
     
     for (int i = 0; i < N_BYTES;i++){
         *CK_A = *CK_A + buffer[i];
         *CK_B = *CK_B + *CK_A;
     }
-    printf("Original CK_A: %" PRIu8 "\n", mittaus->CK_A);
+    /*printf("Original CK_A: %" PRIu8 "\n", mittaus->CK_A);
     printf("Original CK_B: %" PRIu8 "\n", mittaus->CK_B);
 
     printf("Calculated CK_A: %" PRIu8 "\n", *CK_A);
     printf("Calculated CK_B: %" PRIu8 "\n", *CK_B);
+	*/
 }
 
-void printPayload(payload * load){
+void printPayload(size_t len, payload * load){
 
-    printf("----------PAYLOAD------------:\n"
-            "aField: %" PRIu32 "\n"
-            "anotherField: %" PRIu32 "\n"
-            "Flags: %" PRIu16 "\n"
-            "reserved0: %d \n"
-            "numRepeat: %" PRIu8 "\n",
-            load->aField, load->anotherField, load->bitfield, load->reserved0, load->numRepeat);
-    if(load->numRepeat > 0){
-        printf("-----REPEATE GROUP-----\n");
-        for (int i = 0; i < load->numRepeat; i++){
-            printf("(NEW GROUP)\n");
-            printf("RepeatGroup1: %" PRIu16 "\n"
-                   "RepeatGroup2: %" PRIu16 "\n",
-                   load->repeats[i].firstValue, load->repeats[i].secondValue);
-        }
-    }else{
-        printf("No repeats!\n");
-    }
+	printf("----------PAYLOAD------------:\n");
+	for(int i = 0; i < len; i++){
+		printf("Payload byte n.%d: 0x%x\r\n", i, load[i]);
+	}
+	
+
+	printf("-----------------------------:\n");
 }
 
 void printMittaus(mittaus * mittaus){
@@ -105,16 +111,16 @@ void printMittaus(mittaus * mittaus){
             mittaus->CK_A,
             mittaus->CK_B
         );
-    //printPayload(&mittaus->payload);
+    printPayload(mittaus->lenght, mittaus->payload);
 }
 
 void freeAndPrint(mittaus * mittaus){
     printMittaus(mittaus);
-    free(mittaus->payload.repeats);
+    free(mittaus->payload);
 }
 void freeAll(mittaus * mittaus, int N){
     for (int i = 0; i < N; i++){
-        free(mittaus[i].payload.repeats);
+        free(mittaus[i].payload);
     }
 }
 
@@ -132,39 +138,49 @@ int main(){
     while(!feof(file)){
         //fseek(file, -2, SEEK_CUR);
         mittaus testiMittaus;
-        fread(&testiMittaus, 6, 1, file);
-    //printf("Address of testimittaus: %x \n", &testiMittaus);
-    //printf("Address of testimittaus.checksum: %x \n", &testiMittaus.CK_A);
-        //First 15 bytes of the payload are constant (see page 46 in linked site)
-        fread(&testiMittaus.payload, 16, 1, file);
+        //fread(&testiMittaus, 6, 1, file);
+
+	//Parsing the data safely
+	fread(&testiMittaus, 1, 1, file);
+	if(testiMittaus.psync1 == 0xb5){	//Found first sync char
+		fread(&testiMittaus.psync2, 1, 1, file);
+		if(testiMittaus.psync2 == 0x62){
+			fread(&testiMittaus.class, 4, 1, file);
+			
+			testiMittaus.lenght = swapEndian16(testiMittaus.lenght);
+
+			//Allocate memory and read into payload
+			testiMittaus.payload = calloc(1, testiMittaus.lenght);
+			fread(testiMittaus.payload, testiMittaus.lenght, 1, file);
+
+			fread(&testiMittaus.CK_A, 1, 2, file);
+
+			//mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
+			mittaukset[idx++] = testiMittaus;
+			//printMittaus(&testiMittaus);
+
+			uint8_t CHKA, CHKB;
+			calculateChecksum(&testiMittaus, &CHKA, &CHKB);
+			if(testiMittaus.CK_A == CHKA && testiMittaus.CK_B == CHKB){
+			    //puts("Checksum approved!!");
+			}
+			printf("Class: 0x%x, ID: 0x%x", testiMittaus.class, testiMittaus.id);
+			if(testiMittaus.class == 0x01){
+				printf("Arvo: 0x%x\n", testiMittaus.id);
+			}	
+			if(testiMittaus.class == 0x01 && testiMittaus.id == 0x02){
+				UBX_NAV_POSLLH_load testiLoad;
+				memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
+
+				printf("lat: %d, lon: %d, height: %d\n", testiLoad.lat, testiLoad.lon, testiLoad.height);
+			}
+		
+	}
 
         //Took me too long to realize that the data is in little endian format
-        testiMittaus.payload.aField = swapEndian32(testiMittaus.payload.aField);
-        testiMittaus.payload.anotherField = swapEndian32(testiMittaus.payload.anotherField);
-        testiMittaus.lenght = swapEndian16(testiMittaus.lenght);
 
-        printf("numRep: %" PRIu8 "\n", testiMittaus.payload.numRepeat);
-        size_t repeatSize = 0;
-        if(testiMittaus.payload.numRepeat == 0){
-            testiMittaus.payload.repeats = NULL;
-        }else{
-            size_t repeatSize = 4 * testiMittaus.payload.numRepeat;
-            testiMittaus.payload.repeats = calloc(1, repeatSize);
-            fread(testiMittaus.payload.repeats, sizeof(repeatGroup), testiMittaus.payload.numRepeat, file);
-        }
-
-        fread(&testiMittaus.CK_A, 1, 2, file);
-
-        //mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
-        mittaukset[idx++] = testiMittaus;
-        printMittaus(&testiMittaus);
-
-        uint8_t CHKA, CHKB;
-        calculateChecksum(&testiMittaus, &CHKA, &CHKB);
-        if(testiMittaus.CK_A == CHKA && testiMittaus.CK_B == CHKB){
-            puts("Checksum approved!!");
             
-        }else if(idx > 3){
+        }if(idx > 1000){
             //freeAll(mittaukset, idx);
             //exit(1);
             goto EndLoop;
@@ -183,7 +199,7 @@ EndLoop:
     fclose(file);
     for (int i = 0; i < idx;i++){
         //freeAndPrint(&mittaukset[i]);
-        free(mittaukset[i].payload.repeats);
+        free(mittaukset[i].payload);
     }
         // printMittaus(&testiMittaus);
         // free(testiMittaus.payload.repeats);

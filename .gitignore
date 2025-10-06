@@ -1,3 +1,5 @@
 main.o
 main.exe
 build/
+compile_commands.json
+*.plist
