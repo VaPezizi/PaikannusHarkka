@@ -2,8 +2,10 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <inttypes.h>
+#include <unistd.h>
 #include "ubxf.h"
 #include "endians.h"
+#include "netcode.h"
 
 //Ublox documentation
 //https://content.u-blox.com/sites/default/files/documents/u-blox-20-HPG-2.00_InterfaceDescription_UBXDOC-304424225-19888.pdf
@@ -57,9 +59,16 @@ int main(){
                 uint8_t CHKA, CHKB;
                 calculateChecksum(&testiMittaus, &CHKA, &CHKB);
 
+                if(CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B){
+                    fprintf(stderr, "ERROR IN CHECKSUM!\n");
+                    
+                }
                 if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
+                    sendMeasurement(&testiLoad);
+                    sleep(1);   //Sleeping for a second to avoid flooding the backend
+
                 }
 		
             }
