@@ -44,7 +44,7 @@ int main(){
             if(testiMittaus.psync2 == 0x62){
                 fread(&testiMittaus.mclass, 4, 1, file);
                 
-                testiMittaus.lenght = swapEndian16(testiMittaus.lenght);
+                //testiMittaus.lenght = swapEndian16(testiMittaus.lenght);
 
                 //Allocate memory and read into payload
                 testiMittaus.payload = calloc(1, testiMittaus.lenght);
@@ -54,21 +54,21 @@ int main(){
 
                 //mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
                 mittaukset[idx++] = testiMittaus;
-                //printMittaus(&testiMittaus);
+                printMittaus(&testiMittaus);
 
                 uint8_t CHKA, CHKB;
                 calculateChecksum(&testiMittaus, &CHKA, &CHKB);
 
                 if(CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B){
                     fprintf(stderr, "ERROR IN CHECKSUM!\n");
-                    
+                    sleep(1);
                 }
                 if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
                     sendMeasurement(&testiLoad);
-                    sleep(1);   //Sleeping for a second to avoid flooding the backend
-
+                    puts("Sent measurement, sleeping for a second");
+                    sleep(1); // Sleeping for a second to avoid flooding the backend
                 }
 		
             }

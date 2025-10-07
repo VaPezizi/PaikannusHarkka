@@ -1,10 +1,11 @@
-const express = require('express')
-const app = express()
-const cors = require('cors')
+import express, { json } from 'express';
+import cors from 'cors';
 
-app.use(cors())
 
-app.use(express.json())
+const app = express();
+app.use(cors());
+
+app.use(json())
 
 
 let measurements = []
@@ -53,7 +54,11 @@ app.get('/info', (request, response) => {
   */
 
 app.get('/api/measurements', (request, response) => {
-  response.json(measurements)
+  response.json({
+    success: true,
+    data: measurements,
+    count: measurements.length
+  })
 })
 
 app.get('/api/measurements/:id', (request, response) => {
@@ -75,11 +80,9 @@ app.delete('/api/measurements/:id', (request, response) => {
 })
 
 app.post('/api/measurements', (request, response) => {
-  console.log("request", request)
   console.log("request body ", request.body)
-  console.log("request body content", request.body.content)
-
   const p = request.body
+  console.log("request body content", request.body.content)
 
 /*
 
@@ -93,7 +96,7 @@ app.post('/api/measurements', (request, response) => {
 
 */
 
-  if ((p.height === undefined || p.lon === undefined || p.lat === undefined ) !== undefined) {
+  if ((p.height === undefined || p.lon === undefined || p.lat === undefined )) {
     return response.status(400).json({ 
       error: 'height, lat or lon missing ...' 
     })
@@ -102,7 +105,7 @@ app.post('/api/measurements', (request, response) => {
   const maxId = Math.floor(Math.random() * 1000000)
   p.id = String(maxId + 1)
 
-  persons = persons.concat(p)
+  measurements = measurements.concat(p)
 
   response.json(p)
 })

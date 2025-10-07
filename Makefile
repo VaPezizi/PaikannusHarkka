@@ -1,5 +1,5 @@
 CXX = gcc
-CXXFLAGS = -Wall -Iinclude 
+CXXFLAGS = -Wall -Iinclude -lcurl
 SRCDIR = src
 OBJDIR = build
 TARGET = main.o 
