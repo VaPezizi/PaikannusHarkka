@@ -1,133 +1,93 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
+import {
+    MapContainer,
+    TileLayer,
+    Marker,
+    Popup,
+    Polyline
+} from 'react-leaflet';
 
+import 'leaflet/dist/leaflet.css';
 
-const Person = ({person, deleteButtonHandler}) => {
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import io from 'socket.io-client'
+
+const ShowLocationsInList = ({locations}) => {
+
   return (
-    <li>
-      {person.name} {person.number}
-      <button onClick={deleteButtonHandler}> Delete </button>
-    </li>
+    <div>
+      <h2>Locations</h2>
+      <ul>
+        {locations.map((location) => (
+          <li key={location.id}>
+            <p>Time: {location.time}, Latitude: {location.latitude}, Longitude: {location.longitude}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
-const AddPersonForm = ({addPerson, newName, handleNameChange, newNumber, handleNumberChange}) => {
+const ShowMap = ({locations}) => {
+
+  // Create an array of [latitude, longitude] pairs for the Polyline
+  const positions = locations.map(location => [location.latitude, location.longitude]);
+
   return (
-    <form onSubmit={addPerson}>
-      <div>
-        name: <input
-          value={newName}
-          onChange={handleNameChange}
-        />
-      </div>
-      <div>
-        number: <input
-          value={newNumber}
-          onChange={handleNumberChange}
-        />
-      </div>        
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>    
+    <MapContainer
+      center={[62.7903, 22.8406]}
+      zoom={6}
+      style={{height: "400px"}}
+      >
+      <TileLayer
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Polyline positions={positions} color="blue" />
+    </MapContainer>
   )
 }
 
 const App = () => {
-  const [persons, setPersons] = useState([]) 
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
+  const [locations, setLocations] = useState([])
+
+  console.log('App')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/api/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
-      })
-  }, [])
-  console.log('render', persons.length, 'persons')
-
-  // submit-nappulan tapahtumankäsittelijä
-  const addPerson = (event) => {
-    event.preventDefault()
-    console.log('button clicked', event.target)
-
-    // jos nimi on jo listassa, estä lisääminen
-    const index = persons.findIndex(person => person.name === newName)
-    if (index !== -1) {
-      alert('henkilö oli jo listassa')
+    console.log('useEffect')
+    // Connect to Socket.IO server
+    const socket = io('http://localhost:3001');
+    
+    // Handle initial locations data
+    // (data already stored to the server)
+    socket.on('initialLocations', (initialLocations) => {
+      console.log('Received initial locations:',
+        initialLocations);
+      setLocations(initialLocations);
+    });
+     // Handle new locations being added
+      // (received by server from simulator)
+    socket.on('locationAdded', (newLocation) => {
+      console.log('New location added:', newLocation);
+      setLocations(prev => [...prev, newLocation]);
+    });
+     // Cleanup on unmount
+    return () => {
+      socket.disconnect();
     }
-    else
-    {
-      // tehdään uusi olio
-      const person = { name: newName, number: newNumber }
-      // lähetä uusi olio palvelimelle POST:lla
-
-     axios
-      .post('http://localhost:3001/api/persons', person)
-      .then(response => {
-        console.log(response)
-        // lisätään olio listaan
-        setPersons(persons.concat(response.data))        
-      })      
-    }
-    setNewName('')
-    setNewNumber('')
-  }
-
-  const handleNameChange = (event) => setNewName(event.target.value)
-  const handleNumberChange = (event) => setNewNumber(event.target.value)
-
-  const deleteButtonHandler = (id) => {
-    console.log('person ' + id + ' clicked')
-
-    const url = `http://localhost:3001/api/persons/${id}`
-  
-    axios
-      .delete(url)
-      .then(response => {
-        // listan päivitys
-        console.log(response)
-        setPersons(persons.filter(person => person.id !== id))
-      })
-  }
+  } , [])
 
   return (
     <div>
-      <h2>Phonebook</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input
-            value={newName}
-            onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number: <input
-            value={newNumber}
-            onChange={handleNumberChange}
-          />
-        </div>        
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <ul>
-        {
-          persons.map(person =>
-            <Person
-              key={person.id}
-              person={person}
-              deleteButtonHandler={() => deleteButtonHandler(person.id)}
-            />          
-        )}
-      </ul>
+      <h1>Leaflet Location Map</h1>
+      {locations.length > 0 && (
+        <>
+          <ShowMap locations={locations}/>
+          <ShowLocationsInList locations={locations} />
+        </>
+      )}
     </div>
   )
-
 }
 
 export default App

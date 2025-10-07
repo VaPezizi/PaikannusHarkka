@@ -1,10 +1,18 @@
 import express, { json } from 'express';
 import cors from 'cors';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"]
+  }
+});
 app.use(cors());
-
 app.use(json())
 
 
@@ -98,19 +106,30 @@ app.post('/api/measurements', (request, response) => {
 
   if ((p.height === undefined || p.lon === undefined || p.lat === undefined )) {
     return response.status(400).json({ 
-      error: 'height, lat or lon missing ...' 
+      success: false,
+      messahe: 'Invalid location data'
     })
   }  
 
   const maxId = Math.floor(Math.random() * 1000000)
   p.id = String(maxId + 1)
+  const testi = {
+    latitude: p.lat,
+    longitude: p.lon,
+    height: p.height,
+    time: p.iTOW,
+  }
 
-  measurements = measurements.concat(p)
+  measurements.push(testi);
+  io.emit('locationAdded', testi);
+  return response.status(201).json({
+    success: true,
+    data: p
+  })
 
-  response.json(p)
 })
 
 const PORT = 3001
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
