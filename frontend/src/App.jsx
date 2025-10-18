@@ -7,7 +7,7 @@ import {
 } from 'react-leaflet';
 
 import 'leaflet/dist/leaflet.css';
-
+import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client'
@@ -15,7 +15,7 @@ import io from 'socket.io-client'
 const ShowLocationsInList = ({locations}) => {
 
   return (
-    <div>
+    <div className="locations-container">
       <h2>Locations</h2>
       <ul>
         {locations.map((location) => (
@@ -34,17 +34,19 @@ const ShowMap = ({locations}) => {
   const positions = locations.map(location => [location.latitude, location.longitude]);
 
   return (
-    <MapContainer
-      center={[62.7903, 22.8406]}
-      zoom={6}
-      style={{height: "400px"}}
-      >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Polyline positions={positions} color="blue" />
-    </MapContainer>
+    <div className="map-container">
+      <MapContainer
+        center={[62.7903, 22.8406]}
+        zoom={6}
+        style={{height: "400px"}}
+        >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        <Polyline positions={positions} color="blue" />
+      </MapContainer>
+    </div>
   )
 }
 
