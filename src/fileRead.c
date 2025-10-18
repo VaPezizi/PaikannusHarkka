@@ -52,17 +52,20 @@ int beginReadFile(const char* filename, size_t filenameLen){
 
                 if(CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B){
                     fprintf(stderr, "ERROR IN CHECKSUM!\n");
-                    sleep(1);
+#ifdef _WIN32
+                    sleep(1000);    //Sleep 1000ms, win api sleep() function
+#else
+                    sleep(1);   //Sleeps 1 second in linux sleep() function
+#endif
                 }
                 if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
-                    free(testiMittaus.payload);
                     sendMeasurement(&testiLoad);
                     puts("Sent measurement, sleeping for a second");
                     sleep(1); // Sleeping for a second to avoid flooding the backend
                 }
-		
+                free(testiMittaus.payload);
             }
         }        
         /*idx++;

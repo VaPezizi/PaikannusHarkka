@@ -6,18 +6,18 @@
 
 #pragma pack(1)
 typedef struct{
-    uint8_t version;
-    uint8_t reserved1[2];
+	uint8_t version;
+	uint8_t reserved1[2];
 	int8_t bitfield;
-    uint32_t iTOW;
+	uint32_t iTOW;
 	int32_t lon;    //To get coordinate, divide by 10000000
 	int32_t lat;    
 	int32_t height;
 	int32_t hMSL;
-    int8_t lonHp;
-    int8_t latHp;
-    int8_t heightHp;
-    int8_t hMSLHp;
+	int8_t lonHp;
+	int8_t latHp;
+	int8_t heightHp;
+	int8_t hMSLHp;
 	uint32_t hAcc;
 	uint32_t vAcc;
 
