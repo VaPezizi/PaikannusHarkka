@@ -84,7 +84,15 @@ const App = () => {
       <h1>Leaflet Location Map</h1>
       {locations.length > 0 && (
         <>
-          <ShowMap locations={locations}/>
+          <ShowMap locations={locations.map((location, index) =>{
+              <Marker key={index} position={[location.latitude, location.longitude]}>
+              <Popup>
+                <p>
+                  <strong>Time:</strong> {location.time}
+                </p>
+              </Popup>
+            </Marker>
+                })}/>
           <ShowLocationsInList locations={locations} />
         </>
       )}

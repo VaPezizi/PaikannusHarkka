@@ -21,7 +21,7 @@ int beginReadFile(const char* filename, size_t filenameLen){
         puts("Error in reading file!");
         exit(1);
     }
-    mittaus mittaukset[10000];
+    //mittaus mittaukset[10000];
     int idx = 0;
     while(!feof(file)){
         //fseek(file, -2, SEEK_CUR);
@@ -44,7 +44,7 @@ int beginReadFile(const char* filename, size_t filenameLen){
                 fread(&testiMittaus.CK_A, 1, 2, file);
 
                 //mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
-                mittaukset[idx++] = testiMittaus;
+                //mittaukset[idx++] = testiMittaus;
                 printMittaus(&testiMittaus);
 
                 uint8_t CHKA, CHKB;
@@ -57,6 +57,7 @@ int beginReadFile(const char* filename, size_t filenameLen){
                 if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
+                    free(testiMittaus.payload);
                     sendMeasurement(&testiLoad);
                     puts("Sent measurement, sleeping for a second");
                     sleep(1); // Sleeping for a second to avoid flooding the backend
@@ -64,12 +65,11 @@ int beginReadFile(const char* filename, size_t filenameLen){
 		
             }
         }        
-        idx++;
+        /*idx++;
         if(idx > 10000){
-            freeAll(mittaukset, idx);
             cleanUpFile(file);
             exit(1);
-        }
+        }*/
     }
     return 0;
 }
