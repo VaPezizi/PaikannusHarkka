@@ -35,7 +35,7 @@ void printPayload(size_t len, payload * load){
 }
 
 void printMittaus(mittaus * mittaus){
-    printf("psync1: 0x%x \n"
+    /*printf("psync1: 0x%x \n"
             "psync2: 0x%x \n"
             "class: %" PRIu8 "\n"
             "id: %" PRIu8 "\n"
@@ -49,6 +49,9 @@ void printMittaus(mittaus * mittaus){
             mittaus->lenght,
             mittaus->CK_A,
             mittaus->CK_B
-        );
-    printPayload(mittaus->lenght, mittaus->payload);
+        );*/
+      printf("class: %" PRIu8 "\n"
+            "id: %" PRIu8 "\n"
+	, mittaus->mclass, mittaus->id);
+    //printPayload(mittaus->lenght, mittaus->payload);
 }

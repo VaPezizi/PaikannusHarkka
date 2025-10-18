@@ -6,11 +6,15 @@
 #include "ubxf.h"
 #include "endians.h"
 #include "netcode.h"
+#include "fileRead.h"
 
 //Ublox documentation
 //https://content.u-blox.com/sites/default/files/documents/u-blox-20-HPG-2.00_InterfaceDescription_UBXDOC-304424225-19888.pdf
 
-#define FILENAME "COM8___9600_231127_110129.ubx"
+//Right one:
+//https://content.u-blox.com/sites/default/files/documents/u-blox-F9-HPS-1.40_InterfaceDescription_UBXDOC-963802114-13138.pdf?utm_content=UBXDOC-963802114-13138
+
+#define FILENAME "AJOMATKA.ubx"
 
 /*
     CK_A = 0, CK_B = 0
@@ -21,80 +25,42 @@
     }*/
 
 
-int main(){
-    printf("Morjestaa!\n");
+int main(int argc, char** argv){
+    //printf("Morjestaa!\n");
 
-    FILE* file = fopen(FILENAME, "rb");
-    if(!file){
-        puts("Error in reading file!");
-        exit(1);
+    if(argc < 2){
+
+        printf("Using default filename: %s\n", FILENAME);
+
+        beginReadFile(FILENAME, sizeof(FILENAME));
     }
-    //uint8_t c[2];
-    mittaus mittaukset[1000];
-    int idx = 0;
-    while(!feof(file)){
-        //fseek(file, -2, SEEK_CUR);
-        mittaus testiMittaus;
-        //fread(&testiMittaus, 6, 1, file);
-
-        //Parsing the data safely
-        fread(&testiMittaus, 1, 1, file);
-        if(testiMittaus.psync1 == 0xb5){	//Found first sync char
-            fread(&testiMittaus.psync2, 1, 1, file);
-            if(testiMittaus.psync2 == 0x62){
-                fread(&testiMittaus.mclass, 4, 1, file);
-                
-                //testiMittaus.lenght = swapEndian16(testiMittaus.lenght);
-
-                //Allocate memory and read into payload
-                testiMittaus.payload = calloc(1, testiMittaus.lenght);
-                fread(testiMittaus.payload, testiMittaus.lenght, 1, file);
-
-                fread(&testiMittaus.CK_A, 1, 2, file);
-
-                //mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
-                mittaukset[idx++] = testiMittaus;
-                printMittaus(&testiMittaus);
-
-                uint8_t CHKA, CHKB;
-                calculateChecksum(&testiMittaus, &CHKA, &CHKB);
-
-                if(CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B){
-                    fprintf(stderr, "ERROR IN CHECKSUM!\n");
-                    sleep(1);
-                }
-                if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
-                    UBX_NAV_HPPOSLLH_load testiLoad;
-                    memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
-                    sendMeasurement(&testiLoad);
-                    puts("Sent measurement, sleeping for a second");
-                    sleep(1); // Sleeping for a second to avoid flooding the backend
-                }
-		
+    else{
+        if (strcmp(argv[1], "-h") == 0) { // Help menu
+            printf("Usage:\n");
+            printf("  -h                Show this help menu\n");
+            printf("  -f <filename>     Read UBX data from the specified file\n");
+            printf("  -s <serial_port>  Read UBX data from the specified serial port\n");
+            printf("\n\n  Note: reading from serial port is not implemented for Windows OS!\n");
+            return 0;
+        } else if (strcmp(argv[1], "-f") == 0) { // File mode
+            if (argc < 3) {
+                printf("Please provide a filename after '-f' argument!\n");
+                return 1;
             }
-            
-        }if(idx > 1000){
-            //freeAll(mittaukset, idx);
-            //exit(1);
-            goto EndLoop;
+            printf("Reading from file: %s\n", argv[2]);
+            beginReadFile(argv[2], strlen(argv[2]));
+        } else if (strcmp(argv[1], "-s") == 0) { // Serial mode
+            if (argc < 3) {
+                printf("Please provide a serial port after '-s' argument!\n");
+                return 1;
+            }
+            printf("Reading from serial port: %s\n", argv[2]);
+            beginReadSerial(argv[2]);
+        } else {
+            printf("Unknown argument '%s'. Use '-h' for help.\n", argv[1]);
+            return 1;
         }
-        //printMittaus(&testiMittaus);
+     
     }
-    /*
-    memcpy(&testiMittaus, file, 4);
-    memcpy(&testiMittaus + 4, file + 4, testiMittaus.lenght);
-    memcpy(&testiMittaus + 4 + testiMittaus.lenght, file + 4 + testiMittaus.lenght, 16);
-    */
-    /*while(){
 
-    }*/
-EndLoop:
-    fclose(file);
-    for (int i = 0; i < idx;i++){
-        //freeAndPrint(&mittaukset[i]);
-        free(mittaukset[i].payload);
-    }
-        // printMittaus(&testiMittaus);
-        // free(testiMittaus.payload.repeats);
-        return 0;
 }
