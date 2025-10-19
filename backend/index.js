@@ -4,7 +4,6 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { time } from 'console';
 
 dotenv.config();
 
@@ -35,8 +34,6 @@ const measurementSchema = new mongoose.Schema({
 const Measurement = mongoose.model('Measurement', measurementSchema);
 
 //const measurement = new Measurement({ id: '1', latitude: 12.3456, longitude: 12.3456, height: 123, time: 123456});
-
-let measurements = []
 
 
 /*

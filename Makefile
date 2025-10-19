@@ -2,7 +2,7 @@ CXX = gcc
 CXXFLAGS = -Wall -Iinclude -lcurl
 SRCDIR = src
 OBJDIR = build
-TARGET = main.o 
+TARGET = CReadUbx.o
 
 SOURCES := $(wildcard $(SRCDIR)/*.c)
 OBJECTS := $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))

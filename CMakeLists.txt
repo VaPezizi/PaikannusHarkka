@@ -23,3 +23,11 @@ elseif(UNIX)
     message(STATUS "Configuring for Linux")
     # Add any Linux-specific configurations here
 endif()
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_SOURCE_DIR}/AJOMATKA.ubx
+            ${CMAKE_BINARY_DIR}/AJOMATKA.ubx
+    COMMENT "Copying AJOMATKA.ubx to the build folder"
+)
