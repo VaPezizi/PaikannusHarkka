@@ -5,7 +5,7 @@ Harkkatyö on sovellus, joka lukee ja käsittelee paikannustietoja UBX-tiedostoi
   
 Ohjelmisto jaettu neljään osaa,  
     
-    - C ohjelma (src/ include/ main.exe/main.o)  
+    - C ohjelma (src/ include/ CReadUbx.o/CReadUbx.exe)  
     - React frontend  
     - Nodejs backend  
     - MongoDB tietokanta  
