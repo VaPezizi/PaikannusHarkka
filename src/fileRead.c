@@ -63,7 +63,7 @@ int beginReadFile(const char* filename, size_t filenameLen){
                     sendMeasurement(&testiLoad);
                     puts("Sent measurement, sleeping for a second");
 #ifdef _WIN32
-                    sleep(1000);    //Sleep 1000ms, win api sleep() function
+                    Sleep(1000);    //Sleep 1000ms, win api sleep() function
 #else
                     sleep(1);   //Sleeps 1 second in linux sleep() function
 #endif

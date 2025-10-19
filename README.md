@@ -41,12 +41,21 @@ Linux ympäristössä C osio voidaan kääntää Make:lla. Navigoi siis projekti
 ```  
 Ohjelma kääntyy tiedostoon CReadUbx.o  
 
-Windowssilla kääntäminen vaatii CMaken asennusta, ohjelma voidaan tosin myös Linuxilla kääntää   CMakella halutessa.  
+Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Ohje: [MinGW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
+
+Ohjelma voidaan myös Linuxilla kääntää CMakella halutessa.  
   
+Ohjeet MinG
+
 Asenna siis CMake ja aja komennot:  
+
 ```  
-    cmake -B build  
-    cmake --build build  
+    cmake -G "MinGW Makefiles" -S . -B build `
+    -DCMAKE_C_COMPILER=C:/msys64/ucrt64/bin/gcc.exe `
+    -DCMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe `
+    -DCMAKE_MAKE_PROGRAM=C:/msys64/ucrt64/bin/mingw32-make.exe
+
+    cmake --build build
 ```  
 Käännetyn ohjelman löydät sen jälkeen build/CReadUbx  
 
