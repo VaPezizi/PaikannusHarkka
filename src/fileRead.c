@@ -12,6 +12,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+
+#else 
+#include <windows.h>
 #endif
     
 int beginReadFile(const char* filename, size_t filenameLen){
@@ -84,7 +87,7 @@ int cleanUpFile(FILE * file){
 
 #define BAUD_RATE B9600 
 
-#ifndef WIN32
+#ifndef _WIN32
 int beginReadSerial(const char* portName) {
     int serial_fd = open(portName, O_RDWR | O_NOCTTY | O_SYNC);
     if (serial_fd < 0) {
@@ -167,9 +170,101 @@ int beginReadSerial(const char* portName) {
     return 0;
 }
 #endif
-#ifdef WIN32
-    int beginReadSerial(const char* portName) {
+#ifdef _WIN32
+    /*int beginReadSerial(const char* portName) {
         printf("Serial reading not implemented for Windows yet.\n");
         return 1;
+    }*/
+int beginReadSerial(const char* portName) {
+    HANDLE hSerial;
+    DCB dcbSerialParams = { 0 };
+    COMMTIMEOUTS timeouts = { 0 };
+
+    // Open the serial port
+    hSerial = CreateFile(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
+    if (hSerial == INVALID_HANDLE_VALUE) {
+        fprintf(stderr, "Error opening serial port: %s\n", portName);
+        return 1;
     }
+
+    // Set device parameters (baud rate, data bits, stop bits, parity)
+    dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
+    if (!GetCommState(hSerial, &dcbSerialParams)) {
+        fprintf(stderr, "Error getting serial port state\n");
+        CloseHandle(hSerial);
+        return 1;
+    }
+
+    dcbSerialParams.BaudRate = CBR_9600; // Baud rate
+    dcbSerialParams.ByteSize = 8;       // Data bits
+    dcbSerialParams.StopBits = ONESTOPBIT; // Stop bit
+    dcbSerialParams.Parity = NOPARITY;  // No parity
+
+    if (!SetCommState(hSerial, &dcbSerialParams)) {
+        fprintf(stderr, "Error setting serial port state\n");
+        CloseHandle(hSerial);
+        return 1;
+    }
+
+    // Set timeouts
+    timeouts.ReadIntervalTimeout = 50; // 50 ms
+    timeouts.ReadTotalTimeoutConstant = 50;
+    timeouts.ReadTotalTimeoutMultiplier = 10;
+    timeouts.WriteTotalTimeoutConstant = 50;
+    timeouts.WriteTotalTimeoutMultiplier = 10;
+
+    if (!SetCommTimeouts(hSerial, &timeouts)) {
+        fprintf(stderr, "Error setting timeouts\n");
+        CloseHandle(hSerial);
+        return 1;
+    }
+
+    // Read UBX data
+    printf("Reading UBX data from %s...\n", portName);
+
+    while (1) {
+        mittaus testiMittaus;
+        DWORD bytesRead;
+
+        // Read the first sync character
+        if (!ReadFile(hSerial, &testiMittaus.psync1, 1, &bytesRead, NULL) || bytesRead == 0) {
+            continue;
+        }
+
+        if (testiMittaus.psync1 == 0xb5) { // Found first sync char
+            ReadFile(hSerial, &testiMittaus.psync2, 1, &bytesRead, NULL);
+            if (testiMittaus.psync2 == 0x62) {
+                ReadFile(hSerial, &testiMittaus.mclass, 4, &bytesRead, NULL);
+
+                // Allocate memory and read into payload
+                testiMittaus.payload = calloc(1, testiMittaus.lenght);
+                ReadFile(hSerial, testiMittaus.payload, testiMittaus.lenght, &bytesRead, NULL);
+
+                ReadFile(hSerial, &testiMittaus.CK_A, 2, &bytesRead, NULL);
+
+                printMittaus(&testiMittaus);
+
+                uint8_t CHKA, CHKB;
+                calculateChecksum(&testiMittaus, &CHKA, &CHKB);
+
+                if (CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B) {
+                    fprintf(stderr, "ERROR IN CHECKSUM!\n");
+                    Sleep(1000); // Sleep for 1 second
+                }
+                if (testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14) {
+                    UBX_NAV_HPPOSLLH_load testiLoad;
+                    memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
+                    sendMeasurement(&testiLoad);
+                    puts("Sent measurement, sleeping for a second");
+                    Sleep(1000); // Sleep for 1 second
+                }
+                free(testiMittaus.payload);
+            }
+        }
+    }
+
+    CloseHandle(hSerial);
+    return 0;
+}
+
 #endif
