@@ -1,4 +1,4 @@
-/* General styles */
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -7,14 +7,13 @@ body {
   color: #333;
 }
 
-/* Header styles */
 h1 {
   text-align: center;
   color: #2c3e50;
   margin-top: 20px;
 }
 
-/* Locations list */
+
 .locations-container {
   margin: 20px auto;
   padding: 20px;
@@ -42,7 +41,7 @@ h1 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Map container */
+
 .map-container {
   margin: 20px auto;
   max-width: 800px;
@@ -50,4 +49,29 @@ h1 {
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.clear-db-button {
+  /* I hate css, these button styles are ai generated (but edited slightly:D)*/
+  background-color: #FFFFFF; 
+  color: #000000; 
+  border: none; 
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Add padding */
+  font-size: 16px; /* Increase font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
+}
+.buttons-container {
+  margin: 20px auto;
+  text-align: center; /* Center the buttons */
+}
+
+.clear-db-button:hover {
+  background-color: #DEE2E6; /* Darker red on hover */
+}
+
+.clear-db-button:active {
+  background-color: #A7AFB6; /* Even darker red when clicked */
+  transform: scale(0.98); /* Slightly shrink the button on click */
 }

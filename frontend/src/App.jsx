@@ -11,15 +11,16 @@ import './App.css';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client'
+import { ClipLoader } from 'react-spinners'; //Found this online :D
 
 const ShowLocationsInList = ({locations}) => {
-
+  //Using mongodbs _id as key
   return (
     <div className="locations-container">
       <h2>Locations</h2>
       <ul>
         {locations.map((location) => (
-          <li key={location.id}>
+          <li key={location._id}>
             <p>Time: {location.time}, Latitude: {location.latitude}, Longitude: {location.longitude}</p>
           </li>
         ))}
@@ -28,10 +29,15 @@ const ShowLocationsInList = ({locations}) => {
   )
 }
 
+
+
 const ShowMap = ({locations}) => {
 
+  //console.log("Show locations: ", locations);
+
+  const validLocations = locations.filter((location) => location && location.latitude !== undefined && location.longitude !== undefined);
   // Create an array of [latitude, longitude] pairs for the Polyline
-  const positions = locations.map(location => [location.latitude, location.longitude]);
+  const positions = validLocations.map(location => [location.latitude, location.longitude]);
 
   return (
     <div className="map-container">
@@ -50,54 +56,70 @@ const ShowMap = ({locations}) => {
   )
 }
 
-const App = () => {
-  const [locations, setLocations] = useState([])
 
-  console.log('App')
+const App = () => {
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true); // Track loading state
+
 
   useEffect(() => {
-    console.log('useEffect')
+    console.log('useEffect');
+
+    const fetchInitialLocations = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/measurements');
+        console.log('Fetched initial locations:', response.data);
+
+        setLocations(response.data.measurements || []); // Ensure it's an array
+        setLoading(false); // Data fetched successfully
+      } catch (error) {
+        console.error('Error fetching initial locations:', error);
+        setLoading(false); // Stop loading even if there's an error
+      }
+    };
+
+    fetchInitialLocations();
+
     // Connect to Socket.IO server
     const socket = io('http://localhost:3001');
-    
-    // Handle initial locations data
-    // (data already stored to the server)
-    socket.on('initialLocations', (initialLocations) => {
-      console.log('Received initial locations:',
-        initialLocations);
-      setLocations(initialLocations);
-    });
-     // Handle new locations being added
-      // (received by server from simulator)
+
+    // Handle new locations being added
     socket.on('locationAdded', (newLocation) => {
       console.log('New location added:', newLocation);
-      setLocations(prev => [...prev, newLocation]);
+      setLocations((prevLocations) => [...prevLocations, newLocation]);
     });
-     // Cleanup on unmount
+
+    // Cleanup on unmount
     return () => {
       socket.disconnect();
+    };
+  }, []);
+
+  const clearDb = async () => {
+    try {
+      await axios.delete('http://localhost:3001/api/measurements/destroy');
+      console.log('Database cleared');
+      setLocations([]); // Clear the locations state
+    } catch (error) {
+      console.error('Error clearing the database:', error);
     }
-  } , [])
+  };
 
   return (
-    <div>
-      <h1>Leaflet Location Map</h1>
-      {locations.length > 0 && (
-        <>
-          <ShowMap locations={locations.map((location, index) =>{
-              <Marker key={index} position={[location.latitude, location.longitude]}>
-              <Popup>
-                <p>
-                  <strong>Time:</strong> {location.time}
-                </p>
-              </Popup>
-            </Marker>
-                })}/>
+    <div className="App">
+      {loading ? (
+        <ClipLoader color="#FFFFFF" loading={loading} size={50}/> 
+      ) : (
+          <>
+            <ShowMap locations={locations} />
+            <div className='buttons-container'>
+              <button className="clear-db-button" onClick={clearDb}>Clear Database</button>
+              
+            </div>
           <ShowLocationsInList locations={locations} />
         </>
       )}
     </div>
-  )
-}
-
+  );
+};
 export default App
