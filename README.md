@@ -169,7 +169,7 @@ Verkkosivulle pääset osoitteesta: http://localhost:5173
     ```bash
    ./CReadUbx.o -f AJOMATKA.ubx
     ```
-2. **Lue paikannustiedost tiedostosta**
+2. **Lue paikannustiedost sarjaportista**
     ```bash
     ./CReadUbx.o -s /dev/ttyACM0
     ```
