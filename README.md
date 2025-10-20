@@ -45,8 +45,6 @@ Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen
 
 Ohjelma voidaan myös Linuxilla kääntää CMakella halutessa.  
   
-Ohjeet MinG
-
 Asenna siis CMake ja aja komennot:  
 
 ```  
