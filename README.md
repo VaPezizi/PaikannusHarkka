@@ -43,7 +43,6 @@ Ohjelma kääntyy tiedostoon CReadUbx.o
 
 Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Asennus ohjeet:
 1. Mingw asennus
-
     Ohjeet: [VSCodeMingW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
     Linkki suoraan: [MSYS2](https://www.msys2.org/)
 
