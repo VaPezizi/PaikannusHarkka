@@ -41,23 +41,39 @@ Linux ympäristössä C osio voidaan kääntää Make:lla. Navigoi siis projekti
 ```  
 Ohjelma kääntyy tiedostoon CReadUbx.o  
 
-Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Ohje: [MinGW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
+Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Asennus ohjeet:
+1. Mingw asennus
 
-Ohjelma voidaan myös Linuxilla kääntää CMakella halutessa.  
-  
-Ohjeet MinG
+    Ohjeet: [VSCodeMingW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
+    Linkki suoraan: [MSYS2](https://www.msys2.org/)
 
-Asenna siis CMake ja aja komennot:  
+2. Käynnistä mingw ja aja:  
+    pacman -S --needed base-devel mingw-w64-ucrt-x86_64-toolchain
+    pacman -S --needed n mingw-w64-ucrt-x86_64-curl mingw-w64-ucrt-x86_64-openssl
 
-```  
+3. Lisää C:/msys64/ucrt64/bin ympäristö muuttujiin
+    Muokkaa ympäristömuuttujia->Ympäristömuuttujat->Path->Lisää: C:\msys64\ucrt64\bin (Tai mihin nyt asensitkaan)
+
+4. Asenna cmake, (Valitse asennuksessa, että lisäää ympäristömuuttujiin)
+    (CMake)[https://cmake.org/download/]
+
+5. Käynnistä projektin juurikansiossa cmake komennolla:
+    
+```
     cmake -G "MinGW Makefiles" -S . -B build `
-    -DCMAKE_C_COMPILER=C:/msys64/ucrt64/bin/gcc.exe `
-    -DCMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe `
-    -DCMAKE_MAKE_PROGRAM=C:/msys64/ucrt64/bin/mingw32-make.exe
+        -DCMAKE_C_COMPILER=C:/msys64/ucrt64/bin/gcc.exe `
+        -DCMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe `
+        -DCMAKE_MAKE_PROGRAM=C:/msys64/ucrt64/bin/mingw32-make.exe
+```
 
+6. Käännä
+```
     cmake --build build
-```  
-Käännetyn ohjelman löydät sen jälkeen build/CReadUbx  
+```
+Nyt ohjelman pitäisi kääntyä build/CReadUbx.
+
+Ohjelma voidaan myös Linuxilla kääntää CMakella halutessaan, mutta se ei vaadi erillistä ohjetta.  
+
 
 ## Käyttö  
 
