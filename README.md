@@ -2,6 +2,8 @@
 Harjoitustyö paikannus teknologiat kurssille.
 
 Harkkatyö on sovellus, joka lukee ja käsittelee paikannustietoja UBX-tiedostoista tai ublox paikantimella. Sovellus koostuu tiedon parsijasta (C) ,backendistä (Node.js) ja frontendistä (React), ja se käyttää MongoDB-tietokantaa mittaustietojen tallentamiseen.
+
+Mittaustietoja esitetään frontendissä kartalla leaflettiä hyödyntäen.  
   
 Ohjelmisto jaettu neljään osaa,  
     
@@ -31,8 +33,6 @@ Ohjelmisto jaettu neljään osaa,
 ## C-osio  
 
 C osio ohjelmasta hoitaa tiedostosta ja antennista ubx binääri datan parsimisen.  
-
-Tällä hetkellä Antennista suoraan lukeminen on tuettu vain UNIX pohjaisilla käyttöjärjestelmillä.  
 
 ## Kääntäminen   
 Linux ympäristössä C osio voidaan kääntää Make:lla. Navigoi siis projektin juurikansioon ja aja  
