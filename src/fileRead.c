@@ -159,8 +159,8 @@ int beginReadSerial(const char* portName) {
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
                     sendMeasurement(&testiLoad);
-                    puts("Sent measurement, sleeping for a second");
-                    sleep(1); // Sleeping for a second to avoid flooding the backend
+                    puts("Sent measurement, sleeping for a 10th of a second");
+                    sleep(0.1); // Sleeping for a 10th of a second to avoid flooding the backend
                 }
                 free(testiMittaus.payload);
             }
@@ -255,8 +255,8 @@ int beginReadSerial(const char* portName) {
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
                     sendMeasurement(&testiLoad);
-                    puts("Sent measurement, sleeping for a second");
-                    Sleep(1000); // Sleep for 1 second
+                    puts("Sent measurement, sleeping for a 10th of a second");
+                    Sleep(100); // Sleep for 0.1 second
                 }
                 free(testiMittaus.payload);
             }

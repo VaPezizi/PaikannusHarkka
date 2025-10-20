@@ -41,6 +41,7 @@ Linux ympäristössä C osio voidaan kääntää Make:lla. Navigoi siis projekti
 ```  
 Ohjelma kääntyy tiedostoon CReadUbx.o  
 
+### Windowsilla Kääntäminen
 Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Asennus ohjeet:
 1. Mingw asennus
     Ohjeet: [VSCodeMingW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
@@ -72,7 +73,11 @@ Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen
 Nyt ohjelman pitäisi kääntyä build/CReadUbx.
 
 Ohjelma voidaan myös Linuxilla kääntää CMakella halutessaan, mutta se ei vaadi erillistä ohjetta.  
-
+Ohjelmassa on myös Makefile tehtynä, eli unix järjestelmillä voit ajaa vain:
+```
+    make
+```
+Olettaen, että työkalut ovat asennettu.
 
 ## Käyttö  
 
@@ -185,7 +190,8 @@ Verkkosivulle pääset osoitteesta: http://localhost:5173
 
 3. **Sarjaportin lukeminen ei toimi**
    - Varmista, että oikea sarjaportti on valittu.
-   - Tarkista, että UBX_NAV_HPPOSLLH-viestit on otettu käyttöön u-center-ohjelmassa.
+   - Huomaa, että u-center täytyy olla suljettuna, että ohjelma voi lukea porttia.  
+   - Tarkista, että UBX_NAV_HPPOSLLH-viestit on otettu käyttöön u-center-ohjelmassa.  
 
 ## Esimerkkejä käytöstä
 
@@ -197,6 +203,11 @@ Verkkosivulle pääset osoitteesta: http://localhost:5173
     ```bash
     ./CReadUbx.o -s /dev/ttyACM0
     ```
+    Windowsilla
+    ```
+    .\CReadUbx.exe -s COM3
+    ```
+
 3. **Käynnistä back- ja fronend**
     ```bash
     cd backend
