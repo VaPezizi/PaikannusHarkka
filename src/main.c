@@ -4,10 +4,10 @@
 #include <memory.h>
 #include "fileRead.h"
 
-//Ublox documentation (Väärä jota käytin apuna, onneks suurimmaks osaks samaa)
+//Ublox documentation (Not the antenna used, Used this wrong one for almost the whole project :D)
 //https://content.u-blox.com/sites/default/files/documents/u-blox-20-HPG-2.00_InterfaceDescription_UBXDOC-304424225-19888.pdf
 
-//Right one:    (Täs vipoilla kehitys vaiheilla sattu oikee dokumentti löytymään)
+//Right documentation for used receiver:
 //https://content.u-blox.com/sites/default/files/documents/u-blox-F9-HPS-1.40_InterfaceDescription_UBXDOC-963802114-13138.pdf?utm_content=UBXDOC-963802114-13138
 
 #define FILENAME "AJOMATKA.ubx"

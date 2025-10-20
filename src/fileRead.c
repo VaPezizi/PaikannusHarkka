@@ -57,16 +57,16 @@ int beginReadFile(const char* filename, size_t filenameLen){
                     fprintf(stderr, "ERROR IN CHECKSUM!\n");
 
                 }
-                if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
+                else if(testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14){
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
                     sendMeasurement(&testiLoad);
-                    puts("Sent measurement, sleeping for a second");
-#ifdef _WIN32
+                    puts("Sent measurement");
+/*#ifdef _WIN32
                     Sleep(1000);    //Sleep 1000ms, win api sleep() function
 #else
                     sleep(1);   //Sleeps 1 second in linux sleep() function
-#endif
+#endif */
                 }
                 free(testiMittaus.payload);
             }
@@ -153,14 +153,14 @@ int beginReadSerial(const char* portName) {
 
                 if (CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B) {
                     fprintf(stderr, "ERROR IN CHECKSUM!\n");
-                    sleep(1);
+                    //sleep(1);
                 }
-                if (testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14) {
+                else if (testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14) {
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
                     sendMeasurement(&testiLoad);
-                    puts("Sent measurement, sleeping for a 10th of a second");
-                    sleep(0.1); // Sleeping for a 10th of a second to avoid flooding the backend
+                    puts("Sent measurement!");
+                    //sleep(0.1); // Sleeping for a 10th of a second to avoid flooding the backend
                 }
                 free(testiMittaus.payload);
             }
@@ -249,14 +249,14 @@ int beginReadSerial(const char* portName) {
 
                 if (CHKA != testiMittaus.CK_A || CHKB != testiMittaus.CK_B) {
                     fprintf(stderr, "ERROR IN CHECKSUM!\n");
-                    Sleep(1000); // Sleep for 1 second
+                    //Sleep(1000); // Sleep for 1 second
                 }
-                if (testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14) {
+                else if (testiMittaus.mclass == 0x01 && testiMittaus.id == 0x14) {
                     UBX_NAV_HPPOSLLH_load testiLoad;
                     memcpy(&testiLoad, testiMittaus.payload, testiMittaus.lenght);
                     sendMeasurement(&testiLoad);
-                    puts("Sent measurement, sleeping for a 10th of a second");
-                    Sleep(100); // Sleep for 0.1 second
+                    puts("Sent measurement!");
+                    //Sleep(100); // Sleep for 0.1 second
                 }
                 free(testiMittaus.payload);
             }
