@@ -41,21 +41,43 @@ Linux ympäristössä C osio voidaan kääntää Make:lla. Navigoi siis projekti
 ```  
 Ohjelma kääntyy tiedostoon CReadUbx.o  
 
-Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Ohje: [MinGW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
+### Windowsilla Kääntäminen
+Windowssilla kääntäminen vaatii CMaken asennuksen, MinGW asennuksen ja siihen tarvittavien työkalujen asennuksen. Asennus ohjeet:
+1. Mingw asennus
+    Ohjeet: [VSCodeMingW](https://code.visualstudio.com/docs/cpp/config-mingw#_prerequisites)
+    Linkki suoraan: [MSYS2](https://www.msys2.org/)
 
-Ohjelma voidaan myös Linuxilla kääntää CMakella halutessa.  
-  
-Asenna siis CMake ja aja komennot:  
+2. Käynnistä mingw ja aja:  
+    pacman -S --needed base-devel mingw-w64-ucrt-x86_64-toolchain
+    pacman -S --needed n mingw-w64-ucrt-x86_64-curl mingw-w64-ucrt-x86_64-openssl
 
-```  
+3. Lisää C:/msys64/ucrt64/bin ympäristö muuttujiin
+    Muokkaa ympäristömuuttujia->Ympäristömuuttujat->Path->Lisää: C:\msys64\ucrt64\bin (Tai mihin nyt asensitkaan)
+
+4. Asenna cmake, (Valitse asennuksessa, että lisäää ympäristömuuttujiin)
+    (CMake)[https://cmake.org/download/]
+
+5. Käynnistä projektin juurikansiossa cmake komennolla:
+    
+```
     cmake -G "MinGW Makefiles" -S . -B build `
-    -DCMAKE_C_COMPILER=C:/msys64/ucrt64/bin/gcc.exe `
-    -DCMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe `
-    -DCMAKE_MAKE_PROGRAM=C:/msys64/ucrt64/bin/mingw32-make.exe
+        -DCMAKE_C_COMPILER=C:/msys64/ucrt64/bin/gcc.exe `
+        -DCMAKE_CXX_COMPILER=C:/msys64/ucrt64/bin/g++.exe `
+        -DCMAKE_MAKE_PROGRAM=C:/msys64/ucrt64/bin/mingw32-make.exe
+```
 
+6. Käännä
+```
     cmake --build build
-```  
-Käännetyn ohjelman löydät sen jälkeen build/CReadUbx  
+```
+Nyt ohjelman pitäisi kääntyä build/CReadUbx.
+
+Ohjelma voidaan myös Linuxilla kääntää CMakella halutessaan, mutta se ei vaadi erillistä ohjetta.  
+Ohjelmassa on myös Makefile tehtynä, eli unix järjestelmillä voit ajaa vain:
+```
+    make
+```
+Olettaen, että työkalut ovat asennettu.
 
 ## Käyttö  
 
@@ -168,7 +190,8 @@ Verkkosivulle pääset osoitteesta: http://localhost:5173
 
 3. **Sarjaportin lukeminen ei toimi**
    - Varmista, että oikea sarjaportti on valittu.
-   - Tarkista, että UBX_NAV_HPPOSLLH-viestit on otettu käyttöön u-center-ohjelmassa.
+   - Huomaa, että u-center täytyy olla suljettuna, että ohjelma voi lukea porttia.  
+   - Tarkista, että UBX_NAV_HPPOSLLH-viestit on otettu käyttöön u-center-ohjelmassa.  
 
 ## Esimerkkejä käytöstä
 
@@ -180,6 +203,11 @@ Verkkosivulle pääset osoitteesta: http://localhost:5173
     ```bash
     ./CReadUbx.o -s /dev/ttyACM0
     ```
+    Windowsilla
+    ```
+    .\CReadUbx.exe -s COM3
+    ```
+
 3. **Käynnistä back- ja fronend**
     ```bash
     cd backend
