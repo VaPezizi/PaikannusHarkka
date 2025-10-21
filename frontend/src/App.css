@@ -50,14 +50,13 @@ h1 {
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-.clear-db-button {
-  /* I hate css, these button styles are ai generated (but edited slightly:D)*/
-  background-color: #FFFFFF; 
+.button {
+  background-color: #00b3ff; 
   color: #000000; 
   border: none; 
   border-radius: 5px; /* Rounded corners */
   padding: 10px 20px; /* Add padding */
-  font-size: 16px; /* Increase font size */
+  font-size: 13px; /* Increase font size */
   cursor: pointer; /* Pointer cursor on hover */
   transition: background-color 0.3s ease; /* Smooth hover effect */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
@@ -80,6 +79,25 @@ h1 {
   float: left;
 }
 
+.button:hover {
+  background-color: #DEE2E6; /* Darker red on hover */
+}
+
+.button:active {
+  background-color: #A7AFB6; /* Even darker red when clicked */
+  transform: scale(0.98); /* Slightly shrink the button on click */
+}
+.clear-db-button {
+  background-color: #ff8484; 
+  color: #000000; 
+  border: none; 
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Add padding */
+  font-size: 13px; /* Increase font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
+}
 .clear-db-button:hover {
   background-color: #DEE2E6; /* Darker red on hover */
 }
@@ -88,8 +106,8 @@ h1 {
   background-color: #A7AFB6; /* Even darker red when clicked */
   transform: scale(0.98); /* Slightly shrink the button on click */
 }
-.sort-locations-button {
-  background-color: #FFFFFF; 
+.export-button {
+  background-color: #368022; 
   color: #000000; 
   border: none; 
   border-radius: 5px; /* Rounded corners */
@@ -99,11 +117,11 @@ h1 {
   transition: background-color 0.3s ease; /* Smooth hover effect */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
 }
-.sort-locations-button:hover {
+.export-button:hover {
   background-color: #DEE2E6; /* Darker red on hover */
 }
 
-.sort-locations-button:active {
+.export-button:active {
   background-color: #A7AFB6; /* Even darker red when clicked */
   transform: scale(0.98); /* Slightly shrink the button on click */
 }
