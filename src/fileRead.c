@@ -48,7 +48,7 @@ int beginReadFile(const char* filename, size_t filenameLen){
 
                 //mittaukset = realloc(mittaukset, sizeof(mittaukset) + sizeof(mittaus));
                 //mittaukset[idx++] = testiMittaus;
-                printMittaus(&testiMittaus);
+                //printMittaus(&testiMittaus);
 
                 uint8_t CHKA, CHKB;
                 calculateChecksum(&testiMittaus, &CHKA, &CHKB);
@@ -176,6 +176,7 @@ int beginReadSerial(const char* portName) {
         return 1;
     }*/
 int beginReadSerial(const char* portName) {
+    //https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-dcb
     HANDLE hSerial;
     DCB dcbSerialParams = { 0 };
     COMMTIMEOUTS timeouts = { 0 };
@@ -184,6 +185,7 @@ int beginReadSerial(const char* portName) {
     hSerial = CreateFile(portName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, 0, NULL);
     if (hSerial == INVALID_HANDLE_VALUE) {
         fprintf(stderr, "Error opening serial port: %s\n", portName);
+
         return 1;
     }
 
