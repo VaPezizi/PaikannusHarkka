@@ -36,7 +36,7 @@ int main(int argc, char** argv){
             printf("  -h                Show this help menu\n");
             printf("  -f <filename>     Read UBX data from the specified file\n");
             printf("  -s <serial_port>  Read UBX data from the specified serial port\n");
-            printf("\n\n  Note: reading from serial port is not implemented for Windows OS!\n");
+            printf("\n\n  Note: Remember to enable HPPOSLLH in ucenter before reading serial!\n");
             return 0;
         } else if (strcmp(argv[1], "-f") == 0) { // File mode
             if (argc < 3) {
