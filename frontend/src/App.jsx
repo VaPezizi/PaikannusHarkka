@@ -5,7 +5,6 @@ import {
     Popup,
     Polyline
 } from 'react-leaflet';
-
 import 'leaflet/dist/leaflet.css';
 import './App.css';
 import { useState, useEffect } from 'react';
@@ -29,7 +28,15 @@ const ShowLocationsInList = ({locations}) => {
   )
 }
 
+const SortLocationsByTimeButton = ({locations}) => {
 
+
+  return(
+    <div>
+    
+    </div>
+  )
+}
 
 const ShowMap = ({locations}) => {
 
@@ -105,6 +112,10 @@ const App = () => {
     }
   };
 
+  const sortLocationsByTime = () => {
+
+  }
+
   return (
     <div className="App">
       {loading ? (
@@ -114,7 +125,7 @@ const App = () => {
             <ShowMap locations={locations} />
             <div className='buttons-container'>
               <button className="clear-db-button" onClick={clearDb}>Clear Database</button>
-              
+              <button className='sort-locations-button'>Sort by time</button>
             </div>
           <ShowLocationsInList locations={locations} />
         </>

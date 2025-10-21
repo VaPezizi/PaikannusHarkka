@@ -63,8 +63,21 @@ h1 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
 }
 .buttons-container {
+  /*margin: 20px auto;*/
+  text-align: center;  /*Center the buttons */
+  /*display: flex;*/
+  width: 100%;
+  overflow: auto;
   margin: 20px auto;
-  text-align: center; /* Center the buttons */
+  padding: 5px;
+  max-width: 800px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.buttons-container div {
+  width: 50%;
+  float: left;
 }
 
 .clear-db-button:hover {
@@ -72,6 +85,25 @@ h1 {
 }
 
 .clear-db-button:active {
+  background-color: #A7AFB6; /* Even darker red when clicked */
+  transform: scale(0.98); /* Slightly shrink the button on click */
+}
+.sort-locations-button {
+  background-color: #FFFFFF; 
+  color: #000000; 
+  border: none; 
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Add padding */
+  font-size: 16px; /* Increase font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
+}
+.sort-locations-button:hover {
+  background-color: #DEE2E6; /* Darker red on hover */
+}
+
+.sort-locations-button:active {
   background-color: #A7AFB6; /* Even darker red when clicked */
   transform: scale(0.98); /* Slightly shrink the button on click */
 }
