@@ -50,9 +50,64 @@ h1 {
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+.button {
+  background-color: #00b3ff; 
+  color: #000000; 
+  border: none; 
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Add padding */
+  font-size: 13px; /* Increase font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
+}
+.buttons-container {
+  /*margin: 20px auto;*/
+  text-align: center;  /*Center the buttons */
+  /*display: flex;*/
+  width: 100%;
+  overflow: auto;
+  margin: 20px auto;
+  padding: 5px;
+  max-width: 800px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.buttons-container div {
+  width: 50%;
+  float: left;
+}
+
+.button:hover {
+  background-color: #DEE2E6; /* Darker red on hover */
+}
+
+.button:active {
+  background-color: #A7AFB6; /* Even darker red when clicked */
+  transform: scale(0.98); /* Slightly shrink the button on click */
+}
 .clear-db-button {
-  /* I hate css, these button styles are ai generated (but edited slightly:D)*/
-  background-color: #FFFFFF; 
+  background-color: #ff8484; 
+  color: #000000; 
+  border: none; 
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 20px; /* Add padding */
+  font-size: 13px; /* Increase font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
+}
+.clear-db-button:hover {
+  background-color: #DEE2E6; /* Darker red on hover */
+}
+
+.clear-db-button:active {
+  background-color: #A7AFB6; /* Even darker red when clicked */
+  transform: scale(0.98); /* Slightly shrink the button on click */
+}
+.export-button {
+  background-color: #368022; 
   color: #000000; 
   border: none; 
   border-radius: 5px; /* Rounded corners */
@@ -62,16 +117,11 @@ h1 {
   transition: background-color 0.3s ease; /* Smooth hover effect */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */ 
 }
-.buttons-container {
-  margin: 20px auto;
-  text-align: center; /* Center the buttons */
-}
-
-.clear-db-button:hover {
+.export-button:hover {
   background-color: #DEE2E6; /* Darker red on hover */
 }
 
-.clear-db-button:active {
+.export-button:active {
   background-color: #A7AFB6; /* Even darker red when clicked */
   transform: scale(0.98); /* Slightly shrink the button on click */
 }
