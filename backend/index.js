@@ -171,7 +171,7 @@ app.post('/api/measurements', async (request, response) => {
       latitude: p.lat,
       longitude: p.lon,
       height: p.height,
-      time: p.iTOW,
+      time: p.iTOW
     });
     const savedMeasurement = await newMeasurement.save();
 
