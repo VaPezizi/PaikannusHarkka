@@ -122,7 +122,6 @@ Usage:
     -f <filename>     Read UBX data from the specified file  
     -s <serial_port>  Read UBX data from the specified serial port  
 
-    Note: reading from serial port is not implemented for Windows OS!  
 ```  
 Esimerkki:  
 ```
@@ -135,8 +134,7 @@ Ohjelman käynnistäessä ilman argumentteja ("./CReadUbx.o"), ohjelma käyttä�
 C osion koodin löytää kansioista src/ ja /include.  
 Ohjelma toimii lukemalla tiedostoa tai sarjaporttia ja lähettämällä curlilla http Post pyynnön palvelimelle. 
 
-**HUOMIO!** Sarjaportista lukemista ei ole toteutettu Windows käyttöjärjestelmillä.  
-
+Tiedoston alaosassa esimerkkejä käytöstä  
 
 ## Backend (nodejs)  
 
